@@ -1,0 +1,17 @@
+name: Sync Tags
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * *'
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Sync tags from upstream
+        run: |
+          git remote add upstream https://github.com/zxsos/HGhubX.git
+          git fetch upstream --tags
+          git push origin --tags
