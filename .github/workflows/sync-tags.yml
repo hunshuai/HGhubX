@@ -3,15 +3,20 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 9 * * *'
+
+permissions:
+  contents: write   # 关键！允许bot推送tag
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # 必须0，拉完整提交历史，不然上游tag对不上
       - name: Sync tags from upstream
         run: |
+          git remote remove upstream || true
           git remote add upstream https://github.com/zxsos/HGhubX.git
           git fetch upstream --tags
           git push origin --tags
