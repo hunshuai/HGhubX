@@ -5,7 +5,7 @@ on:
     - cron: '0 9 * * *'
 
 permissions:
-  contents: write   # 关键！允许bot推送tag
+  contents: write
 
 jobs:
   sync:
@@ -13,10 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 必须0，拉完整提交历史，不然上游tag对不上
+          fetch-depth: 0
       - name: Sync tags from upstream
         run: |
           git remote remove upstream || true
           git remote add upstream https://github.com/zxsos/HGhubX.git
           git fetch upstream --tags
-          git push origin --tags
+          # 重点：失败就跳过，不中断action
+          git push origin --tags || echo "部分tag已经存在，跳过冲突标签"
